@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS SAA-C03 Roadmap</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    padding: 24px 16px 80px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 20px;
+    color: #FF9900;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: #718096;
+    margin-bottom: 32px;
+  }
+
+  /* ── Week Card ── */
+  .week {
+    border: 1px solid #2d3748;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .week.current { border-color: #FF9900; }
+
+  .week-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #1a1d2e;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .week-num {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: #252836;
+    border: 2px solid #2d3748;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: #718096;
+    flex-shrink: 0;
+  }
+  .week.current .week-num {
+    background: #FF9900; border-color: #FF9900; color: #000;
+  }
+
+  .week-info { flex: 1; }
+  .week-title { font-size: 14px; font-weight: 600; }
+  .week-dates { font-size: 12px; color: #718096; margin-top: 2px; }
+
+  .week-stats {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+    flex-shrink: 0;
+  }
+  .week-progress { font-size: 13px; font-weight: 600; color: #FF9900; }
+  .week-current-tag {
+    background: #FF9900; color: #000;
+    font-size: 10px; font-weight: 700;
+    padding: 2px 8px; border-radius: 10px;
+  }
+
+  .week-body {
+    padding: 12px 16px;
+    display: none;
+  }
+  .week-body.open { display: block; }
+
+  /* ── Section rows ── */
+  .section-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .section-row + .section-row { border-top: 1px solid #1e2233; }
+  .section-row:hover { background: #252836; }
+  .section-row.done { opacity: 0.55; }
+
+  .tick {
+    width: 20px; height: 20px;
+    border: 2px solid #2d3748;
+    border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 12px;
+    transition: all 0.2s;
+  }
+  .section-row.done .tick {
+    background: #48bb78; border-color: #48bb78; color: #fff;
+  }
+
+  .section-info { flex: 1; min-width: 0; }
+  .section-label { font-size: 13px; }
+  .section-row.done .section-label { text-decoration: line-through; color: #718096; }
+  .section-desc { font-size: 11px; color: #4a5568; margin-top: 3px; line-height: 1.45; }
+  .section-row.done .section-desc { color: #2d3748; }
+
+  .section-date { font-size: 11px; color: #718096; white-space: nowrap; }
+
+  .tick { margin-top: 1px; }
+
+  .domain-badge {
+    font-size: 10px; font-weight: 600;
+    padding: 2px 7px; border-radius: 10px;
+    white-space: nowrap; flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .domain-badge.secure     { background: rgba(124,58,237,0.15); color: #a78bfa; border: 1px solid rgba(124,58,237,0.35); }
+  .domain-badge.resilient  { background: rgba(72,187,120,0.15); color: #68d391; border: 1px solid rgba(72,187,120,0.35); }
+  .domain-badge.performant { background: rgba(255,153,0,0.15);  color: #FF9900; border: 1px solid rgba(255,153,0,0.35); }
+  .domain-badge.cost       { background: rgba(56,178,172,0.15); color: #4fd1c5; border: 1px solid rgba(56,178,172,0.35); }
+
+  /* ── No-study day picker ── */
+  .no-study-area {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #2d3748;
+  }
+
+  .no-study-label {
+    font-size: 11px; color: #718096; margin-bottom: 6px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+
+  .day-pills {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+
+  .day-pill {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    border: 1px solid #2d3748;
+    background: transparent;
+    color: #718096;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .day-pill.no-study {
+    background: rgba(252,129,129,0.15);
+    border-color: #fc8181;
+    color: #fc8181;
+  }
+  .day-pill.studied {
+    background: rgba(72,187,120,0.12);
+    border-color: #48bb78;
+    color: #48bb78;
+  }
+
+  /* ── Special weeks ── */
+  .special-week {
+    padding: 20px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 6px;
+  }
+  .exam-week  { background: rgba(255,153,0,0.1);  color: #FF9900; }
+  .job-week   { background: rgba(72,187,120,0.1); color: #48bb78; }
+
+  .practice-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 6px;
+    border-radius: 6px; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .practice-row + .practice-row { border-top: 1px solid #1e2233; }
+  .practice-row:hover { background: #252836; }
+  .practice-row.done { opacity: 0.55; }
+  .practice-row.done .tick { background: #48bb78; border-color: #48bb78; color: #fff; }
+  .practice-row.done .section-label { text-decoration: line-through; color: #718096; }
+
+  .score-badge {
+    font-size: 12px; font-weight: 600;
+    padding: 2px 8px; border-radius: 10px;
+    background: #252836; color: #718096;
+    cursor: pointer; border: 1px solid #2d3748;
+    white-space: nowrap;
+  }
+  .score-badge.pass { background: rgba(72,187,120,0.15); color: #48bb78; border-color: #48bb78; }
+  .score-badge.fail { background: rgba(252,129,129,0.15); color: #fc8181; border-color: #fc8181; }
+
+  /* ── Progress bar at top ── */
+  .global-progress {
+    background: #1a1d2e;
+    border: 1px solid #2d3748;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+  .gp-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .gp-title { font-size: 13px; font-weight: 600; }
+  .gp-pct { font-size: 22px; font-weight: 700; color: #FF9900; }
+  .bar { height: 8px; background: #252836; border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; background: linear-gradient(90deg, #FF9900, #ffb347); border-radius: 4px; transition: width 0.5s; }
+
+  /* Settings strip */
+  .settings-strip {
+    background: #1a1d2e;
+    border: 1px solid #2d3748;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 24px;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .settings-strip label { font-size: 12px; color: #718096; }
+  .settings-strip input[type="date"] {
+    background: #252836; border: 1px solid #2d3748;
+    border-radius: 6px; color: #e2e8f0; font-size: 13px; padding: 5px 10px;
+  }
+  .settings-strip input[type="date"]:focus { outline: none; border-color: #FF9900; }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #252836; border: 1px solid #2d3748;
+    padding: 10px 20px; border-radius: 8px; font-size: 13px;
+    z-index: 999; display: none;
+  }
+</style>
+</head>
+<body>
+
+<h1>☁️ AWS SAA-C03 Roadmap</h1>
+<p class="subtitle">Ultimate AWS Certified Solutions Architect Associate 2026 — Stephane Maarek</p>
+
+<!-- Start date setting -->
+<div class="settings-strip">
+  <label>Sprint Start Date:</label>
+  <input type="date" id="start-date">
+  <span style="font-size:12px;color:#718096">← ตั้งเพื่อให้เห็นวันที่แต่ละ week</span>
+</div>
+
+<!-- Global progress -->
+<div class="global-progress">
+  <div class="gp-row">
+    <span class="gp-title">Overall Progress</span>
+    <span class="gp-pct" id="gp-pct">0%</span>
+  </div>
+  <div class="bar"><div class="bar-fill" id="gp-bar" style="width:0%"></div></div>
+  <div style="font-size:12px;color:#718096;margin-top:6px" id="gp-label">0 / 32 sections + 0 / 6 practice tests</div>
+</div>
+
+<!-- Weeks rendered here -->
+<div id="roadmap"></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DOMAIN_META = {
+  S: { key: 'secure',     label: '🔐 Secure'     },
+  R: { key: 'resilient',  label: '🔁 Resilient'  },
+  P: { key: 'performant', label: '⚡ Performant'  },
+  C: { key: 'cost',       label: '💰 Cost'        },
+};
+
+const SECTIONS_PER_WEEK = [
+  { week: 1,  type: 'study', label: 'Foundation — IAM + EC2',
+    sections: [
+      { num: 1,  title: 'Introduction',
+        desc: 'ภาพรวม course และสิ่งที่จะเรียน — อ่านผ่านแค่นั้น' },
+      { num: 2,  title: 'Code & Slides Download',
+        desc: 'ดาวน์โหลด slides และ code ของ course — ทำครั้งเดียวก็พอ' },
+      { num: 3,  title: 'Getting Started with AWS',
+        desc: 'สร้าง account, เข้าใจ Region/AZ, ตั้ง billing alert — ต้อง setup ก่อนทำอะไรทุกอย่าง' },
+      { num: 4,  title: 'IAM & AWS CLI',                   domain: 'S',
+        desc: 'จัดการ user/group/policy — เหมือน AD แต่บน cloud ทุก AWS service ต้องผ่านนี้ ออกสอบ 30%' },
+      { num: 5,  title: 'EC2 Fundamentals',                domain: 'P',
+        desc: 'VM บน cloud — เลือก instance type, keypair, security group พื้นฐานที่ทุก infra engineer ต้องรู้' },
+      { num: 6,  title: 'EC2 — Solutions Architect Level', domain: 'P',
+        desc: 'Placement group, ENI, spot vs reserved — เลือก EC2 ให้ตรง workload ช่วยลด cost ได้มาก' },
+      { num: 7,  title: 'EC2 Instance Storage',            domain: 'P',
+        desc: 'EBS = disk, EFS = NFS, instance store = temp — เลือกผิดข้อมูลหายหรือ cost พุ่ง' },
+    ]},
+  { week: 2,  type: 'study', label: 'ELB/ASG + RDS + Route 53 + Classic Architecture',
+    sections: [
+      { num: 8,  title: 'High Availability & Scalability: ELB & ASG', domain: 'R',
+        desc: 'Load balancer + auto scale — หัวใจ HA system บน AWS ออกสอบเยอะที่สุด topic นึง' },
+      { num: 9,  title: 'RDS + Aurora + ElastiCache',                 domain: 'P',
+        desc: 'Managed DB + Redis/Memcached — ไม่ต้อง patch OS แต่ต้องรู้ว่าเลือก engine ไหนเมื่อไร' },
+      { num: 10, title: 'Route 53',                                   domain: 'R',
+        desc: 'DNS ของ AWS มี routing policy พิเศษ — failover/weighted/latency ใช้สำหรับ HA cross-region' },
+      { num: 11, title: 'Classic Solutions Architecture',             domain: 'R',
+        desc: 'เชื่อม concepts ก่อนหน้าผ่าน real-world pattern เช่น stateless web app — เห็นภาพก่อนเรียนต่อ' },
+    ]},
+  { week: 3,  type: 'study', label: 'Amazon S3 + CloudFront + Storage',
+    sections: [
+      { num: 12, title: 'Amazon S3 Introduction',              domain: 'C',
+        desc: 'Object storage เก็บได้ทุกอย่าง — backup, log, static website, data lake ราคาถูกที่สุดบน AWS' },
+      { num: 13, title: 'Advanced Amazon S3',                  domain: 'P',
+        desc: 'Versioning, lifecycle policy, replication — optimize cost และ compliance ให้ถูกต้อง' },
+      { num: 14, title: 'Amazon S3 Security',                  domain: 'S',
+        desc: 'Bucket policy, encryption, pre-signed URL — ป้องกัน data leak ซึ่งเป็น incident ที่พบบ่อยมาก' },
+      { num: 15, title: 'CloudFront & AWS Global Accelerator', domain: 'P',
+        desc: 'CDN กระจาย content ทั่วโลก + เร่ง TCP global — ลด latency และ load ที่ origin server' },
+      { num: 16, title: 'AWS Storage Extras',                  domain: 'C',
+        desc: 'Snow family (ส่ง HDD จริง), Storage Gateway (hybrid), FSx — ใช้เมื่อ migrate data ขนาดใหญ่หรือยังมี on-prem' },
+    ]},
+  { week: 4,  type: 'study', label: 'Decoupling + Containers + Serverless',
+    sections: [
+      { num: 17, title: 'Decoupling: SQS, SNS, Kinesis, Active MQ', domain: 'R',
+        desc: 'Queue + pub/sub + stream — ตัด tight coupling ระหว่าง service ทำให้ระบบ resilient และ scale ได้อิสระ' },
+      { num: 18, title: 'Containers: ECS, Fargate, ECR & EKS',      domain: 'P',
+        desc: 'รัน container บน AWS — ECS คือ AWS-native, EKS คือ Kubernetes managed ไม่ต้องดูแล control plane' },
+      { num: 19, title: 'Serverless Overview',                       domain: 'P',
+        desc: 'Lambda + API Gateway + DynamoDB + Cognito — จ่ายตาม request ไม่ต้องจัดการ server เลย' },
+      { num: 20, title: 'Serverless Architecture Discussions',       domain: 'P',
+        desc: 'Pattern จริง เช่น mobile backend, thumbnail pipeline — เอา serverless มาต่อกันเป็น solution' },
+    ]},
+  { week: 5,  type: 'study', label: 'Databases + Data & Analytics + ML',
+    sections: [
+      { num: 21, title: 'Databases in AWS',  domain: 'C',
+        desc: 'RDS vs DynamoDB vs Redshift vs Neptune — เลือก DB ให้ถูก usecase ผิดพลาดนี้แก้ยากและแพงมาก' },
+      { num: 22, title: 'Data & Analytics',  domain: 'P',
+        desc: 'Athena (query S3), Glue (ETL), Redshift (warehouse), Kinesis (stream) — data pipeline บน AWS ไม่ต้องตั้ง Hadoop เอง' },
+      { num: 23, title: 'Machine Learning',  domain: 'P',
+        desc: 'Rekognition, Comprehend, SageMaker — รู้จักชื่อและ usecase ออกสอบแบบ scenario เลือก service ให้ถูก' },
+    ]},
+  { week: 6,  type: 'study', label: 'Monitoring + IAM Advanced + Security + VPC',
+    sections: [
+      { num: 24, title: 'AWS Monitoring, Audit & Performance', domain: 'S',
+        desc: 'CloudWatch (metrics/logs/alarm) + CloudTrail (API history) + Config — เหมือน SIEM + monitoring รวมกัน' },
+      { num: 25, title: 'IAM Advanced',                        domain: 'S',
+        desc: 'Roles, SCP, Permission Boundary, cross-account — จำเป็นสำหรับ multi-account enterprise setup' },
+      { num: 26, title: 'AWS Security & Encryption',           domain: 'S',
+        desc: 'KMS (key mgmt), Secrets Manager, WAF, Shield — ป้องกัน data at rest/in transit และ DDoS' },
+      { num: 27, title: 'Networking — VPC',                    domain: 'S',
+        desc: 'Subnet, routing, NAT, VPN, Direct Connect — network บน AWS สำคัญมากถ้าทำ hybrid cloud' },
+    ]},
+  { week: 7,  type: 'study', label: 'DR + Architectures + Other + WhitePapers',
+    sections: [
+      { num: 28, title: 'Disaster Recovery & Migrations',           domain: 'R',
+        desc: 'RPO/RTO, Backup vs Pilot Light vs Warm Standby vs Multi-site — วางแผน DR ให้ถูกและ cost effective' },
+      { num: 29, title: 'More Solution Architectures',              domain: 'R',
+        desc: 'Event-driven, HPC, microservices patterns — ดู architecture แบบ enterprise จริงๆ' },
+      { num: 30, title: 'Other Services',                           domain: 'C',
+        desc: 'SES, SSM, Pinpoint, Cost Explorer — รู้จักชื่อและ usecase พอ ออกสอบแค่ 1-2 ข้อ' },
+      { num: 31, title: 'WhitePapers & Well-Architected Framework',
+        desc: '6 Pillars: Security/Reliability/Performance/Cost/Ops/Sustainability — framework ที่ข้อสอบอ้างถึงตลอด' },
+    ]},
+  { week: 8,  type: 'study', label: 'Exam Prep + Full Review',
+    sections: [
+      { num: 32, title: 'Preparing for Exam + Practice Exam',
+        desc: 'Tips สอบ, time management, trap questions — อ่านก่อนสอบจริง เพิ่ม score ได้อีก 5-10%' },
+    ]},
+  { week: 9,  type: 'exam',     label: 'Practice Exams 1–3  (Target 70%+)',  tests: [1,2,3] },
+  { week: 10, type: 'exam',     label: 'Practice Exams 4–6  (Target 80%+)',  tests: [4,5,6] },
+  { week: 11, type: 'takeExam', label: 'สอบจริง SAA-C03 🎯' },
+  { week: 12, type: 'jobhunt',  label: 'Resume Refresh + Apply 10–20 jobs/week 💼' },
+];
+
+const DAYS = ['จ','อ','พ','พฤ','ศ','ส','อา'];
+
+// ── Storage ──
+const sSave = (k,v) => localStorage.setItem(k, JSON.stringify(v));
+const sLoad = k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
+
+function getData() {
+  const sections = sLoad('sprint_sections') || {};
+  const pt       = sLoad('sprint_practice_tests') || {};
+  const days     = sLoad('rm_day_data') || {};
+  return { ...sections, ...pt, ...days };
+}
+
+function saveData(merged) {
+  const sections = {}, pt = {}, days = {};
+  for (const [k, v] of Object.entries(merged)) {
+    if (k.startsWith('day_'))    days[k] = v;
+    else if (k.startsWith('pt')) pt[k] = v;
+    else                          sections[k] = v;
+  }
+  sSave('sprint_sections', sections);
+  sSave('sprint_practice_tests', pt);
+  sSave('rm_day_data', days);
+}
+
+// ── Dates ──
+function getStartDate() { return document.getElementById('start-date').value; }
+
+function localDateStr(d) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function displayDate(s) {
+  if (!s) return '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s))
+    return new Date(s + 'T00:00:00').toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
+  return s;
+}
+
+function weekRange(startStr, weekNum) {
+  if (!startStr) return { start: null, end: null };
+  const s = new Date(startStr + 'T00:00:00');
+  s.setDate(s.getDate() + (weekNum - 1) * 7);
+  const e = new Date(s); e.setDate(e.getDate() + 6);
+  return { start: s, end: e };
+}
+
+function fmt(d, withYear = false) {
+  if (!d) return '';
+  const opts = { day: 'numeric', month: 'short' };
+  if (withYear) opts.year = '2-digit';
+  return d.toLocaleDateString('th-TH', opts);
+}
+
+function currentWeekNum(startStr) {
+  if (!startStr) return 1;
+  const diff = Date.now() - new Date(startStr + 'T00:00:00').getTime();
+  return Math.max(1, Math.min(12, Math.floor(diff / (7*864e5)) + 1));
+}
+
+// ── Render ──
+function render() {
+  const data    = getData();
+  const start   = getStartDate();
+  const curWeek = currentWeekNum(start);
+
+  // Global progress
+  let secDone = 0, ptDone = 0;
+  for (let i = 1; i <= 32; i++) if (data['s'+i]?.done) secDone++;
+  for (let i = 1; i <= 6;  i++) if (data['pt'+i]?.done) ptDone++;
+  const pct = Math.round(((secDone + ptDone) / 38) * 100);
+  document.getElementById('gp-pct').textContent = pct + '%';
+  document.getElementById('gp-bar').style.width = pct + '%';
+  document.getElementById('gp-label').textContent =
+    `${secDone} / 32 sections   +   ${ptDone} / 6 practice tests`;
+
+  document.getElementById('roadmap').innerHTML = SECTIONS_PER_WEEK.map(wp => {
+    const isCurrent = wp.week === curWeek;
+    const { start: s, end: e } = weekRange(start, wp.week);
+    const dateRange = (s && e) ? `${fmt(s)} – ${fmt(e, true)}` : `Week ${wp.week}`;
+
+    let dayPills = '';
+    if (s && (wp.type === 'study' || wp.type === 'exam')) {
+      const pills = [];
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(s); d.setDate(d.getDate() + i);
+        const ds = localDateStr(d);
+        const state = data['day_' + ds] || 'none';
+        pills.push(`<button class="day-pill ${state !== 'none' ? state : ''}" data-date="${ds}">${DAYS[i]} ${d.getDate()}</button>`);
+      }
+      dayPills = `
+        <div class="no-study-area">
+          <div class="no-study-label">วันที่เรียน / ไม่ได้เรียน — กดเพื่อสลับ</div>
+          <div class="day-pills">${pills.join('')}</div>
+        </div>`;
+    }
+
+    let body = '';
+    let progress = '';
+
+    if (wp.type === 'study') {
+      const total = wp.sections.length;
+      const done  = wp.sections.filter(s => data['s'+s.num]?.done).length;
+      progress = `${done}/${total}`;
+      body = wp.sections.map(sec => {
+        const sd   = data['s'+sec.num] || {};
+        const done = sd.done || false;
+        const dm = sec.domain && DOMAIN_META[sec.domain];
+        return `<div class="section-row ${done ? 'done' : ''}" data-sec="${sec.num}">
+          <div class="tick">${done ? '✓' : ''}</div>
+          <div class="section-info">
+            <div class="section-label">${sec.num}. ${sec.title}</div>
+            ${sec.desc ? `<div class="section-desc">${sec.desc}</div>` : ''}
+          </div>
+          ${dm ? `<span class="domain-badge ${dm.key}">${dm.label}</span>` : ''}
+          ${done && sd.date ? `<span class="section-date">${displayDate(sd.date)}</span>` : ''}
+        </div>`;
+      }).join('') + dayPills;
+    } else if (wp.type === 'exam') {
+      const done = wp.tests.filter(n => data['pt'+n]?.done).length;
+      progress = `${done}/${wp.tests.length}`;
+      body = wp.tests.map(n => {
+        const pt   = data['pt'+n] || {};
+        const done = pt.done || false;
+        const sc   = pt.score;
+        return `<div class="practice-row ${done ? 'done' : ''}" data-pt="${n}">
+          <div class="tick">${done ? '✓' : ''}</div>
+          <span class="section-label">Practice Test ${n} (65Q)</span>
+          <span class="score-badge ${sc >= 72 ? 'pass' : sc ? 'fail' : ''}" data-pt-score="${n}">
+            ${sc ? sc + '%' : '— %'}
+          </span>
+        </div>`;
+      }).join('') + dayPills;
+    } else if (wp.type === 'takeExam') {
+      body = `<div class="special-week exam-week">🎯 วันสอบ SAA-C03 — ตั้งใจให้เต็มที่</div>`;
+    } else if (wp.type === 'jobhunt') {
+      body = `<div class="special-week job-week">💼 ปรับ Resume + ส่ง CV 10–20 ใบ/สัปดาห์</div>`;
+    }
+
+    const isOpen = isCurrent || wp.type === 'takeExam' || wp.type === 'jobhunt';
+
+    return `
+      <div class="week ${isCurrent ? 'current' : ''}" data-week="${wp.week}">
+        <div class="week-header" onclick="toggleWeek(${wp.week})">
+          <div class="week-num">W${wp.week}</div>
+          <div class="week-info">
+            <div class="week-title">${wp.label}</div>
+            <div class="week-dates">${dateRange}</div>
+          </div>
+          <div class="week-stats">
+            ${progress ? `<span class="week-progress">${progress} sections</span>` : ''}
+            ${isCurrent ? '<span class="week-current-tag">สัปดาห์นี้</span>' : ''}
+          </div>
+        </div>
+        <div class="week-body ${isOpen ? 'open' : ''}" id="wb-${wp.week}">
+          ${body}
+        </div>
+      </div>`;
+  }).join('');
+
+  bindEvents();
+}
+
+function toggleWeek(n) {
+  const el = document.getElementById('wb-' + n);
+  el.classList.toggle('open');
+}
+
+function bindEvents() {
+  // Section tick
+  document.querySelectorAll('.section-row[data-sec]').forEach(el => {
+    el.addEventListener('click', () => {
+      const num  = el.dataset.sec;
+      const data = getData();
+      const done = !data['s'+num]?.done;
+      data['s'+num] = { ...data['s'+num], done, date: done ? localDateStr(new Date()) : null };
+      saveData(data);
+      toast(done ? `✅ Section ${num} เรียนแล้ว` : `↩️ ยกเลิก`);
+      render();
+    });
+  });
+
+  // Practice test tick
+  document.querySelectorAll('.practice-row[data-pt]').forEach(el => {
+    el.addEventListener('click', e => {
+      if (e.target.dataset.ptScore) return;
+      const num  = el.dataset.pt;
+      const data = getData();
+      const done = !data['pt'+num]?.done;
+      data['pt'+num] = { ...data['pt'+num], done, date: done ? localDateStr(new Date()) : null };
+      saveData(data);
+      toast(done ? `✅ Practice Test ${num} done!` : `↩️ ยกเลิก`);
+      render();
+    });
+  });
+
+  // Score badge click → prompt
+  document.querySelectorAll('[data-pt-score]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const num   = btn.dataset.ptScore;
+      const sc    = prompt(`คะแนน Practice Test ${num} (%):`);
+      if (sc === null) return;
+      const score = parseInt(sc);
+      if (isNaN(score)) return;
+      const data  = getData();
+      data['pt'+num] = { ...data['pt'+num], score, done: true, date: localDateStr(new Date()) };
+      saveData(data);
+      toast(`📝 Test ${num}: ${score}%`);
+      render();
+    });
+  });
+
+  // Day pill — cycle: none → studied → no-study → none
+  document.querySelectorAll('.day-pill[data-date]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const date  = btn.dataset.date;
+      const data  = getData();
+      const cur   = data['day_' + date] || 'none';
+      const next  = cur === 'none' ? 'studied' : cur === 'studied' ? 'no-study' : 'none';
+      data['day_' + date] = next;
+      saveData(data);
+      const label = next === 'studied' ? '✅ เรียนแล้ว' : next === 'no-study' ? '❌ ไม่ได้เรียน' : '—';
+      toast(label);
+      render();
+    });
+  });
+}
+
+// ── Toast ──
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.display = 'block';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.style.display = 'none', 2000);
+}
+
+// ── Init ──
+document.addEventListener('DOMContentLoaded', () => {
+  const settings = sLoad('sprint_settings');
+  const saved = settings?.startDate || sLoad('rm_start');
+  if (saved) document.getElementById('start-date').value = saved;
+
+  document.getElementById('start-date').addEventListener('change', e => {
+    sSave('rm_start', e.target.value);
+    render();
+  });
+
+  render();
+});
+</script>
+</body>
+</html>

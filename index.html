@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AWS SAA-C03 Sprint</title>
+  <title>AWS SAA-C03 Course Progress</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -21,81 +24,63 @@
       </div>
     </header>
 
-    <!-- Stats Bar -->
-    <div class="stats-bar">
-      <div class="stat-card">
-        <div class="stat-label">Week</div>
-        <div class="stat-value primary" id="stat-week">—/12</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Hours this week</div>
-        <div class="stat-value" id="stat-hours">—</div>
-        <div class="mini-bar"><div class="mini-bar-fill" id="hours-bar-fill"></div></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Streak</div>
-        <div class="stat-value" id="stat-streak">— days 🔥</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Sections</div>
-        <div class="stat-value" id="stat-sections">—/32</div>
-        <div class="mini-bar"><div class="mini-bar-fill" id="sections-bar-fill"></div></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Latest Mock</div>
-        <div class="stat-value" id="stat-mock">—%</div>
-      </div>
-    </div>
-
     <!-- Tabs -->
     <nav class="tabs">
-      <button class="tab-btn active" data-tab="log">📝 Log Today</button>
+      <button class="tab-btn active" data-tab="daily">🔥 Today</button>
       <button class="tab-btn" data-tab="course">📚 Course</button>
-      <button class="tab-btn" data-tab="weak">⚠️ Weak Areas</button>
-      <button class="tab-btn" data-tab="mock">📊 Mock Exams</button>
+      <button class="tab-btn" data-tab="plan">📅 Plan</button>
+      <button class="tab-btn" data-tab="flash">🃏 Flashcards</button>
       <button class="tab-btn" data-tab="settings">⚙️ Settings</button>
     </nav>
 
     <!-- Main -->
     <main class="main">
 
-      <!-- LOG TAB -->
-      <div class="tab-content active" id="tab-log">
-        <div class="two-col">
-          <div class="card">
-            <h2>Log Today</h2>
-            <form id="form-log">
-              <div class="form-group">
-                <label>Date</label>
-                <input type="date" id="log-date" required>
-              </div>
-              <div class="form-group">
-                <label>Hours studied</label>
-                <input type="number" id="log-hours" min="0" max="24" step="0.5" placeholder="1.5" required>
-              </div>
-              <div class="form-group">
-                <label>Topics covered</label>
-                <input type="text" id="log-topics" placeholder="IAM, S3, EC2...">
-              </div>
-              <div class="form-group">
-                <label>Notes / สิ่งที่ยังงง</label>
-                <textarea id="log-notes" rows="3" placeholder="ความรู้สึก หรือ topic ที่ยังสงสัย..."></textarea>
-              </div>
-              <div class="form-group checkbox-group">
-                <label><input type="checkbox" id="log-lab"> ทำ Lab / AWS Console วันนี้</label>
-              </div>
-              <button type="submit" class="btn-primary full-width">💾 Save Log</button>
-            </form>
+      <!-- ───────── DAILY TAB ───────── -->
+      <div class="tab-content active" id="tab-daily">
+
+        <!-- Hero stats -->
+        <div class="stats-grid">
+          <div class="stat-card stat-streak">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-value" id="stat-streak">0</div>
+            <div class="stat-label">วันต่อเนื่อง</div>
           </div>
-          <div class="card">
-            <h2>Recent Logs</h2>
-            <div id="recent-logs"><p class="empty">ยังไม่มี log — เริ่มเลยวันนี้!</p></div>
+          <div class="stat-card stat-countdown">
+            <div class="stat-icon">📆</div>
+            <div class="stat-value" id="stat-countdown">—</div>
+            <div class="stat-label" id="stat-countdown-label">ตั้งวันสอบใน Settings</div>
+          </div>
+          <div class="stat-card stat-progress">
+            <div class="stat-icon">📊</div>
+            <div class="stat-value" id="stat-course-pct">0%</div>
+            <div class="stat-label">Course progress</div>
+          </div>
+          <div class="stat-card stat-week">
+            <div class="stat-icon">🗓️</div>
+            <div class="stat-value" id="stat-week">W1</div>
+            <div class="stat-label" id="stat-week-label">Week ปัจจุบัน</div>
           </div>
         </div>
+
+        <!-- Today's checklist -->
+        <div class="card" style="margin-top:16px">
+          <h2>✅ Daily Checklist — <span id="today-date" style="color:var(--text-muted);font-weight:500;font-size:13px"></span></h2>
+          <p class="elsa-hint">ทำให้ครบทุกวัน → streak จะเพิ่มขึ้น · กดเพื่อ toggle</p>
+          <div id="daily-checklist"></div>
+        </div>
+
+        <!-- This week focus -->
+        <div class="card" style="margin-top:16px">
+          <h2>🎯 Focus สัปดาห์นี้</h2>
+          <div id="week-focus"></div>
+        </div>
+
       </div>
 
-      <!-- COURSE TAB -->
-      <div class="tab-content hidden" id="tab-course">
+      <!-- ───────── COURSE TAB ───────── -->
+      <div class="tab-content" id="tab-course">
+
         <div class="card">
           <h2>Course Progress — Stephane Maarek SAA-C03</h2>
           <div class="course-header">
@@ -105,99 +90,91 @@
             </div>
             <p id="course-summary" class="course-summary"></p>
           </div>
+          <div class="u-legend">
+            <span class="u-badge u-learning">กำลังเรียน</span>
+            <span class="u-badge u-understood">เข้าใจแล้ว</span>
+            <span class="u-badge u-confused">งงอยู่</span>
+            <span style="font-size:11px;color:var(--text-muted)">← คลิก badge เพื่อเปลี่ยน</span>
+          </div>
           <div id="sections-list"></div>
         </div>
+
+        <div class="card" style="margin-top:16px">
+          <h2>📋 ELSA Learning Plan — แนวการเรียน English</h2>
+          <p class="elsa-hint">เรียน ELSA ตาม 3 phase นี้ — แต่ละ phase ต่อยอดจาก phase ก่อนหน้า · กดเพื่อขยาย/ย่อ</p>
+          <div id="elsa-plan"></div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h2>☁️ AWS Service Pronunciation + ความหมาย</h2>
+          <p class="elsa-hint">drill ออกเสียงให้ถูก + รู้ว่าแต่ละ service คืออะไร</p>
+          <div id="elsa-services"></div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h2>📚 IT Vocabulary — คำที่ต้องคุ้นชิน</h2>
+          <p class="elsa-hint">คำหลักสำหรับ IT meeting + ความหมายภาษาไทย</p>
+          <div id="elsa-vocab"></div>
+        </div>
+
       </div>
 
-      <!-- WEAK AREAS TAB -->
-      <div class="tab-content hidden" id="tab-weak">
-        <div class="two-col">
-          <div class="card">
-            <h2>Add Weak Area</h2>
-            <form id="form-weak">
-              <div class="form-group">
-                <label>Topic</label>
-                <input type="text" id="weak-topic" placeholder="S3 storage class" required>
-              </div>
-              <div class="form-group">
-                <label>AWS Service</label>
-                <input type="text" id="weak-service" placeholder="S3">
-              </div>
-              <div class="form-group">
-                <label>Source</label>
-                <select id="weak-source">
-                  <option value="Note">📖 จากการเรียน</option>
-                  <option value="Mock">❌ จาก Mock exam</option>
-                </select>
-              </div>
-              <button type="submit" class="btn-primary full-width">➕ Add</button>
-            </form>
-          </div>
-          <div class="card">
-            <h2>Weak Areas <span id="weak-count" class="badge"></span></h2>
-            <div id="weak-list"><p class="empty">ยังไม่มี — เพิ่มเมื่อเจอข้อที่งง</p></div>
-          </div>
+      <!-- ───────── PLAN TAB ───────── -->
+      <div class="tab-content" id="tab-plan">
+        <div class="card">
+          <h2>📅 Weekly Study Plan — 11 Weeks to Exam</h2>
+          <p class="elsa-hint">แผน sprint รายสัปดาห์ · AWS + ELSA + Hands-on · ปรับได้ตามเวลาจริง</p>
+          <div id="weekly-plan"></div>
         </div>
       </div>
 
-      <!-- MOCK TAB -->
-      <div class="tab-content hidden" id="tab-mock">
-        <div class="two-col">
-          <div class="card">
-            <h2>Add Mock Score</h2>
-            <form id="form-mock">
-              <div class="form-group">
-                <label>Exam</label>
-                <select id="mock-exam-name">
-                  <option>Tutorials Dojo #1</option>
-                  <option>Tutorials Dojo #2</option>
-                  <option>Tutorials Dojo #3</option>
-                  <option>Tutorials Dojo #4</option>
-                  <option>Tutorials Dojo #5</option>
-                  <option>Udemy Practice Exam</option>
-                  <option>Other</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Score (%)</label>
-                <input type="number" id="mock-score" min="0" max="100" placeholder="75" required>
-              </div>
-              <div class="form-group">
-                <label>Date</label>
-                <input type="date" id="mock-date" required>
-              </div>
-              <div class="form-group">
-                <label>Notes</label>
-                <textarea id="mock-notes" rows="2" placeholder="จุดอ่อนที่เจอ..."></textarea>
-              </div>
-              <button type="submit" class="btn-primary full-width">💾 Save Score</button>
-            </form>
+      <!-- ───────── FLASHCARDS TAB ───────── -->
+      <div class="tab-content" id="tab-flash">
+        <div class="card">
+          <h2>🃏 Flashcards — AWS Services + IT Vocab</h2>
+          <p class="elsa-hint">รีวิว spaced repetition · กลับการ์ดแล้วบอกตัวเอง "รู้" / "ไม่รู้"</p>
+
+          <div class="flash-stats">
+            <span class="flash-stat"><b id="flash-total">0</b> total</span>
+            <span class="flash-stat flash-due"><b id="flash-due">0</b> ครบกำหนดทบทวน</span>
+            <span class="flash-stat flash-mastered"><b id="flash-mastered">0</b> mastered</span>
           </div>
-          <div class="card">
-            <h2>Mock Exam Scores</h2>
-            <p class="target-label">🎯 Target: 80%+ สามครั้งติดกัน → สอบจริง</p>
-            <div id="mock-list"><p class="empty">ยังไม่มี — เริ่ม W9-10</p></div>
+
+          <div class="flash-controls">
+            <button class="btn-sm" data-flash-deck="all">All</button>
+            <button class="btn-sm" data-flash-deck="aws">AWS Services</button>
+            <button class="btn-sm" data-flash-deck="vocab">IT Vocab</button>
+            <button class="btn-sm" data-flash-deck="due">Due only</button>
           </div>
+
+          <div id="flash-area"></div>
         </div>
       </div>
 
-      <!-- SETTINGS TAB -->
-      <div class="tab-content hidden" id="tab-settings">
+      <!-- ───────── SETTINGS TAB ───────── -->
+      <div class="tab-content" id="tab-settings">
         <div class="card settings-card">
           <h2>⚙️ Settings</h2>
           <form id="form-settings">
             <div class="form-group">
-              <label>Sprint Start Date (Week 1 เริ่มวันไหน)</label>
-              <input type="date" id="settings-start" required>
-              <small>ใช้คำนวณ Week X/12</small>
+              <label>Sprint Start Date</label>
+              <input type="date" id="settings-start">
+              <small>วันที่เริ่ม sprint (Week 1) — ใช้แสดงสัปดาห์ปัจจุบัน</small>
             </div>
             <div class="form-group">
-              <label>Weekly Hour Target</label>
-              <input type="number" id="settings-target" min="1" max="40" value="7">
-              <small>ชั่วโมงต่อสัปดาห์ที่ตั้งเป้า</small>
+              <label>Exam Date</label>
+              <input type="date" id="settings-exam">
+              <small>วันที่จองสอบ — แสดง countdown ที่หน้า Today</small>
             </div>
-            <button type="submit" class="btn-primary">💾 Save Settings</button>
+            <button type="submit" class="btn-primary">💾 Save</button>
           </form>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h2>🗑️ Reset Data</h2>
+          <p class="elsa-hint">ลบข้อมูล daily checklist / flashcards / progress ทั้งหมด · ทำ export ก่อนถ้าเสียดาย</p>
+          <button class="btn-sm" id="btn-reset-daily">Reset Daily Checklist</button>
+          <button class="btn-sm" id="btn-reset-flash" style="margin-left:8px">Reset Flashcard Progress</button>
         </div>
       </div>
 

@@ -1,109 +1,57 @@
 # Setup Guide — AWS SAA-C03 Sprint Dashboard
 
-## สิ่งที่ต้องทำ 4 ขั้นตอน
+Dashboard นี้เป็น static web app ที่เก็บข้อมูลใน `localStorage` ของ browser เครื่องนั้นๆ ไม่ต้องใช้ Firebase, database, login, หรือ backend
 
----
+## ใช้งานแบบ local
 
-## Step 1 — สร้าง Firebase Project
+1. เปิดไฟล์ `index.html` ด้วย browser
+2. ไปที่ tab `Settings`
+3. ตั้ง `Sprint Start Date`
+4. ตั้ง `Weekly Hour Target`
+5. เริ่ม log การเรียนใน tab `Log Today`
 
-1. ไปที่ https://console.firebase.google.com
-2. คลิก **Add project** → ตั้งชื่อ เช่น `aws-sprint-dashboard`
-3. ปิด Google Analytics (ไม่จำเป็น) → **Create project**
+## Deploy ด้วย GitHub Pages
 
----
-
-## Step 2 — เปิด Google Sign-in
-
-1. Firebase Console → **Authentication** → **Get started**
-2. **Sign-in method** → เลือก **Google** → Enable → **Save**
-
----
-
-## Step 3 — สร้าง Firestore Database
-
-1. Firebase Console → **Firestore Database** → **Create database**
-2. เลือก **Start in production mode** → **Next**
-3. เลือก Region: **asia-southeast1 (Singapore)** → **Enable**
-4. ไปที่ **Rules** tab → แทนที่ทุกอย่างด้วย:
-
-```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /users/{userId}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-  }
-}
-```
-
-5. คลิก **Publish**
-
----
-
-## Step 4 — เอา Config มาใส่
-
-1. Firebase Console → **Project Settings** (รูปเฟือง)
-2. เลื่อนลงมาที่ **Your apps** → คลิก **</>** (Web app)
-3. ตั้งชื่อ app → **Register app**
-4. Copy ค่า `firebaseConfig` ทั้งหมด
-5. เปิดไฟล์ `js/firebase-config.js` → แทนที่ค่า placeholder ทุกตัว
-
-ตัวอย่าง:
-```javascript
-const firebaseConfig = {
-  apiKey:            "AIzaSy...",
-  authDomain:        "aws-sprint-dashboard.firebaseapp.com",
-  projectId:         "aws-sprint-dashboard",
-  storageBucket:     "aws-sprint-dashboard.appspot.com",
-  messagingSenderId: "1234567890",
-  appId:             "1:1234567890:web:abc123"
-};
-```
-
----
-
-## Step 5 — Push ขึ้น GitHub
+1. สร้าง repo ใหม่บน GitHub เช่น `aws-sprint-dashboard`
+2. push ไฟล์ทั้งหมดขึ้น repo
 
 ```bash
-# สร้าง repo ใหม่บน GitHub ชื่อ: aws-sprint-dashboard
-# แล้วรันคำสั่งนี้ใน folder นี้:
-
 git init
 git add .
 git commit -m "init sprint dashboard"
+git branch -M main
 git remote add origin https://github.com/YOUR_USERNAME/aws-sprint-dashboard.git
 git push -u origin main
 ```
 
----
+3. เปิด GitHub repo แล้วไปที่ `Settings` -> `Pages`
+4. Source: `Deploy from a branch`
+5. Branch: `main`, Folder: `/ (root)`
+6. กด `Save`
+7. รอ 1-2 นาที แล้วเปิด URL:
 
-## Step 6 — เปิด GitHub Pages
+```text
+https://YOUR_USERNAME.github.io/aws-sprint-dashboard
+```
 
-1. GitHub repo → **Settings** → **Pages**
-2. Source: **Deploy from a branch**
-3. Branch: **main** → Folder: **/ (root)** → **Save**
-4. รอ 1-2 นาที → ได้ URL: `https://YOUR_USERNAME.github.io/aws-sprint-dashboard`
+## Backup และย้ายเครื่อง
 
----
+ข้อมูลถูกเก็บใน browser ของเครื่องที่ใช้งานผ่าน `localStorage` ดังนั้นข้อมูลจะไม่ sync ข้ามเครื่องอัตโนมัติ
 
-## Step 7 — เพิ่ม GitHub Pages domain ใน Firebase Auth
+วิธี backup:
 
-1. Firebase Console → **Authentication** → **Settings** → **Authorized domains**
-2. คลิก **Add domain**
-3. ใส่: `YOUR_USERNAME.github.io`
-4. **Add**
+1. กด `Export` ด้านบนขวา
+2. เก็บไฟล์ `sprint-backup-YYYY-MM-DD.json`
 
----
+วิธี restore หรือย้ายเครื่อง:
 
-## เสร็จแล้ว!
+1. เปิด dashboard ใน browser เครื่องใหม่
+2. กด `Import`
+3. เลือกไฟล์ backup `.json`
 
-เปิด URL จาก GitHub Pages → Sign in with Google → ตั้ง Sprint Start Date ใน Settings → เริ่มใช้งานได้เลย
+## หมายเหตุสำคัญ
 
----
-
-## หมายเหตุ
-
-- ข้อมูลทั้งหมดเก็บใน Firebase Firestore (ฟรี Spark plan)
-- Free tier: 1GB storage, 50,000 reads/day — เพียงพอสำหรับใช้คนเดียวตลอด 12 สัปดาห์
-- เข้าได้จากทุกเครื่อง / มือถือ โดย Sign in ด้วย Google account เดิม
+- ถ้า clear browser data หรือใช้ incognito ข้อมูลอาจหายได้
+- ถ้าใช้หลาย browser ข้อมูลจะแยกกัน
+- ถ้าต้องการ sync ข้ามเครื่องจริงๆ ค่อยเพิ่ม Firebase/Firestore หรือ backend ภายหลัง
+- เวอร์ชันปัจจุบันตั้งใจให้เรียบง่าย: เปิดได้เร็ว, deploy ง่าย, ใช้คนเดียวได้ทันที

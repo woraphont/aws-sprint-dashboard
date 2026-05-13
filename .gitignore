@@ -1,2 +1,13 @@
 .DS_Store
 Thumbs.db
+
+# Local tool state
+.claude/
+.serena/
+.codex/
+.idea/
+.vscode/
+*.swp
+
+# Logs
+*.log
